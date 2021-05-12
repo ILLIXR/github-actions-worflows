@@ -2,9 +2,6 @@ name: ci-fetch-build-run
 descrption: Pulls the latest head of the current branch and runs the CI pipeline
 
 inputs:
-  ghcr_token:
-    description : Token for the GitHub Container Registry
-    required    : True
   distro_ver:
     description : The type of machine to run the job on
     required    : True
@@ -12,11 +9,14 @@ inputs:
     description : The branch name for the job
     required    : True
 
+env:
+  ghcr_token: ${{ secrets.GHCR_TOKEN }}
+
 runs:
   using: composite
   steps:
   - name: Login to ghcr.io
-    run: echo ${{ inputs.ghcr_token }} | docker login ghcr.io -u illixr-ci --password-stdin
+    run: echo ${{ env.ghcr_token }} | docker login ghcr.io -u illixr-ci --password-stdin
     shell: bash
 
   # Pulls latest and current branch tag of this container. This allows the docker build to use the cache for faster builds.
